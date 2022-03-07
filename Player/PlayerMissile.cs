@@ -8,7 +8,11 @@ public class PlayerMissile : MonoBehaviour
 
     [SerializeField] GameObject p_explosion;
     
+    private float interval; 
     
+    private float timer;
+    
+    public static PlayerMissile m_instance;
 
     IEnumerator shot()
     {
@@ -18,17 +22,39 @@ public class PlayerMissile : MonoBehaviour
         Instantiate(p_explosion, transform.position, Quaternion.identity);
     }
 
+    IEnumerator del()
+    {
+        yield return new WaitForSeconds(5f);
+
+        Instantiate(p_explosion, transform.position, Quaternion.identity);
+    }
+
     void Start()
     {
+        m_instance = this;        
+
         rb2d = GetComponent<Rigidbody2D>();
-        Init(); 
+        Init();
+
+        StartCoroutine(shot());
+    }
+
+    public void missileShot()
+    {
+        rb2d = GetComponent<Rigidbody2D>();
+        Init();
 
         StartCoroutine(shot());
     }
 
     void Update()
     {
-        rb2d.velocity -= new Vector2(0, 0.005f);
+        rb2d.velocity -= new Vector2(0, 0.009f);
+
+        // timer += Time.deltaTime;
+        // if (timer < interval) return;
+        // timer = 0;
+        
 
     }
     

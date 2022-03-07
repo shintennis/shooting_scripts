@@ -19,7 +19,7 @@ public class EnemyManager : MonoBehaviour
 
     void Update()
     {
-        if (Player.m_instance.gameObject.activeSelf == false) Destroy(gameObject);
+        if (Player.m_instance.gameObject.activeSelf == false) return;
         
         timer += Time.deltaTime;
         

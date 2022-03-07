@@ -6,6 +6,12 @@ public class Player : MonoBehaviour
 {
 	// Spaceshipコンポーネント
 	Spaceship spaceship;
+
+	playerAttackTypes playerAttackTypes;
+
+	PlayerMissile playerMissile;
+	
+	playerHomingMissile playerHoming;
 	
 	//次のレベルまでに必要な経験値の基本値
 	public int nextExpBase;
@@ -28,7 +34,6 @@ public class Player : MonoBehaviour
 	//NowHP
 	public int nowhp;
 	
-	playerAttackTypes playerAttackTypes;
 	
 	//NowExp
 	public int m_exp;
@@ -41,6 +46,12 @@ public class Player : MonoBehaviour
 
 	//アイテムをひきつける距離（最小値）
 	public Vector2 m_itemDistanceFrom;
+	
+	public float m_missileDistance;
+	
+	public Vector2 m_missileDistanceFrom;
+
+	public Vector2 m_missileDistanceTo;
 	
 	//プレイヤーのインスタンスを管理する static変数
 	public static Player m_instance;
@@ -55,14 +66,22 @@ public class Player : MonoBehaviour
 		
 		m_itemDistanceTo = new Vector2(1.5f, 1.5f);
 		
+		m_missileDistanceFrom = new Vector2(3.0f, 3.0f);
+
+		m_missileDistance = Vector2.Distance(m_missileDistanceFrom, m_missileDistanceTo);
+		
 		m_itemDistance = Vector2.Distance(m_itemDistanceFrom, m_itemDistanceTo);
 
 		// Spaceshipコンポーネントを取得
 		spaceship = Spaceship.m_instance;
 		
-		var score = Score.m_instance;
-
 		playerAttackTypes = playerAttackTypes.m_instance;
+
+		playerMissile = PlayerMissile.m_instance;
+		
+		playerHoming = playerHomingMissile.m_instance;
+
+		var score = Score.m_instance;
 		
 		//shotDelayの初期値
 		spaceship.shotDelay = .5f;
@@ -76,19 +95,28 @@ public class Player : MonoBehaviour
 		//次のレベルに必要な経験値
 		needExp = GetNeedExp(1);	
 		
-		
+
 		while (true) {
 			
 			// 弾をプレイヤーと同じ位置/角度で作成
 			spaceship.Shot (transform);
 			
-			
+			if (spaceship.playerShot1 == true)
+			{
+				spaceship.playerShot_1(transform);
+			}
+			if (spaceship.playerShot2 == true)
+			{
+				spaceship.playerShot_2(transform);
+			}
+
 			// ショット音を鳴らす
 			GetComponent<AudioSource>().Play();
 			
 			// shotDelay秒待つ
 			yield return new WaitForSeconds (spaceship.shotDelay);
 		}
+		
 	}
 	
 	void Update ()
@@ -191,6 +219,7 @@ public class Player : MonoBehaviour
 	void OnTriggerEnter2D (Collider2D c) 
 	{
 		// レイヤー名を取得
+		
 		string layerName = LayerMask.LayerToName(c.gameObject.layer);
 		var score = Score.m_instance;
 		
@@ -214,17 +243,20 @@ public class Player : MonoBehaviour
 					nowhp = nowhp + 10;
 					score.hpgauge.value = nowhp;					
 					break;
-				case "PlayerBullet_3":
+				case "PlayerBullet_3(Clone)":
 					Debug.Log("攻撃パターン1");
-					spaceship.playerShot_1(transform);
+					spaceship.playerShot1 = true;
 					break;
+
 				case "PlayerBullet_4(Clone)":
 					Debug.Log("攻撃パターン2");
-					spaceship.playerShot_2(transform);
+					spaceship.playerShot2 = true;
 					break;
+
 				case "PlayerBullet_5(Clone)":
 					Debug.Log("攻撃パターン3");
 					break;
+
 			}
 			
 			Destroy(c.gameObject);

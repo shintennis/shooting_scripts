@@ -96,23 +96,39 @@ public class Enemy : MonoBehaviour
         //レイヤー名がbullet(Player)以外の時は何も行わない
         if(layerName != "Bullet(Player)") return;
 
-        switch(tag)
+        //PlayerBulletのTransformを取得
+        Transform playerBulletTransform = c.transform.parent;
+        Transform targetTrans = c.transform;
+
+
+        string name = c.name;
+        switch(name)
         {
-            case "defaultShot":
-                Debug.Log("firstBullet");
-                //PlayerBulletのTransformを取得
-                // Transform playerBulletTransform = c.transform.parent;
+            case "PlayerBullet(Clone)":
 
                 //Bulletコンポ―ネントを取得
                 // Bullet bullet = playerBulletTransform.GetComponent<Bullet>();
                 
                 //ヒットポイントを減らす
                 // hp = hp - bullet.power;
+                if (hp <= 0)
+                {
+                    spaceship.Explosion();
+                    Destroy(gameObject);
+                }
+
                 break;
-            case "playerShot_1":
+            case "playerHomingMissile(Clone)":
                 Debug.Log("playerShot_1");
+                playerHomingMissile playerHoming = targetTrans.GetComponent<playerHomingMissile>();
+                hp = hp - playerHoming.damage;
+                if (hp <= 0)
+                {
+                    spaceship.Explosion();
+                    Destroy(gameObject);
+                }
                 break;
-            case "playerShot_2":
+            case "playerHomingMissile":
                 Debug.Log("playerShot_2");
                 break;
             case "playerShot_3":
@@ -120,15 +136,12 @@ public class Enemy : MonoBehaviour
                 break;
         }
 
-                //PlayerBulletのTransformを取得
-                Transform playerBulletTransform = c.transform.parent;
 
                 //Bulletコンポ―ネントを取得
                 Bullet bullet = playerBulletTransform.GetComponent<Bullet>();
                 
                 //ヒットポイントを減らす
                 hp = hp - bullet.power;
-        
 
 
         //弾の削除

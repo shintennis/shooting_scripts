@@ -21,6 +21,12 @@ public class Spaceship : MonoBehaviour
 	
 	// 弾を撃つかどうか
 	public bool canShot;
+	
+	public bool playerShot1;
+
+	public bool playerShot2;
+
+	public bool playerShot3;
 
 	// 爆発のPrefab
 	public GameObject explosion;
@@ -58,12 +64,12 @@ public class Spaceship : MonoBehaviour
 
 	public void playerShot_2(Transform origin)
 	{
-	Instantiate (playerBullet_1, origin.position, origin.rotation);
+	Instantiate (playerBullet_2, origin.position, origin.rotation);
 	}
 
 	public void playerShot_3(Transform origin)
 	{
-		Instantiate (playerBullet_1, origin.position, origin.rotation);
+		Instantiate (playerBullet_3, origin.position, origin.rotation);
 	}
 
 	// アニメーターコンポーネントの取得
