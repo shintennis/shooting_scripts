@@ -55,10 +55,7 @@ public class playerHomingMissile : MonoBehaviour
 
          
 
-        // Vector2 v = new Vector3(0,spaceship_speed * Time.deltaTime);
-        // var rb = GetComponent<Rigidbody2D>().velocity;
         Vector2 v = new Vector2(0,spaceship_speed * Time.deltaTime);
-        // this.transform.position += new Vector3(spaceship_speed * Time.deltaTime, 0, 0);
 
         transform.Translate(v);
 

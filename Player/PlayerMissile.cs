@@ -50,10 +50,8 @@ public class PlayerMissile : MonoBehaviour
     void Update()
     {
         rb2d.velocity -= new Vector2(0, 0.009f);
+        
 
-        // timer += Time.deltaTime;
-        // if (timer < interval) return;
-        // timer = 0;
         
 
     }

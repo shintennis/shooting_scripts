@@ -7,11 +7,13 @@ public class Player : MonoBehaviour
 	// Spaceshipコンポーネント
 	Spaceship spaceship;
 
-	playerAttackTypes playerAttackTypes;
-
 	PlayerMissile playerMissile;
 	
 	playerHomingMissile playerHoming;
+	
+	private SpriteRenderer sp;
+	
+	private bool isDamage;
 	
 	//次のレベルまでに必要な経験値の基本値
 	public int nextExpBase;
@@ -62,6 +64,11 @@ public class Player : MonoBehaviour
 	{
 		m_instance = this;	
 		
+		sp = GetComponent<SpriteRenderer>(); 
+		
+		//ダメージ判定
+		isDamage = false;
+		
 		m_itemDistanceFrom = transform.localPosition;
 		
 		m_itemDistanceTo = new Vector2(1.5f, 1.5f);
@@ -75,8 +82,6 @@ public class Player : MonoBehaviour
 		// Spaceshipコンポーネントを取得
 		spaceship = Spaceship.m_instance;
 		
-		playerAttackTypes = playerAttackTypes.m_instance;
-
 		playerMissile = PlayerMissile.m_instance;
 		
 		playerHoming = playerHomingMissile.m_instance;
@@ -133,6 +138,13 @@ public class Player : MonoBehaviour
 		
 		// 移動の制限
 		Move (direction);
+		
+		//ダメージ判定
+		if (isDamage)
+		{
+			float lev = Mathf.Abs(Mathf.Sin(Time.time * 15));
+			sp.color = new Color(1f, 1f, 1f, lev);
+		}
 
 	}
 	
@@ -212,7 +224,16 @@ public class Player : MonoBehaviour
 		
 		Score.m_instance.expgauge.minValue = prevNeedExp;
 	}
-	
+
+	public IEnumerator OnDamage()
+	{
+		yield return new WaitForSeconds(1.0f);
+
+		//通常の状態に戻す
+		isDamage = false;
+		sp.color = new Color(1f, 1f, 1f, 1f);
+		Debug.Log("damage");
+	}	
 
 	
 	// ぶつかった瞬間に呼び出される
@@ -266,8 +287,14 @@ public class Player : MonoBehaviour
 		// レイヤー名がBullet (Enemy)の時は弾を削除
 		if( layerName == "Bullet(Enemy)" || layerName == "Enemy")
 		{
+			//ダメージ判定中は処理をスキップ
+			if (isDamage) return;
+
+			isDamage = true;
+			StartCoroutine(OnDamage());
+			
 			var enemy = FindObjectOfType<Enemy>();
-			// var score = FindObjectOfType<Score>();
+
 			nowhp = nowhp - enemy.damage; 
 
 			score.hpgauge.value = nowhp;	
