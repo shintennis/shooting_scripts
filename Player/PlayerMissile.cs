@@ -39,21 +39,17 @@ public class PlayerMissile : MonoBehaviour
         StartCoroutine(shot());
     }
 
-    public void missileShot()
-    {
-        rb2d = GetComponent<Rigidbody2D>();
-        Init();
+    // public void missileShot()
+    // {
+    //     rb2d = GetComponent<Rigidbody2D>();
+    //     Init();
 
-        StartCoroutine(shot());
-    }
+    //     StartCoroutine(shot());
+    // }
 
     void Update()
     {
         rb2d.velocity -= new Vector2(0, 0.009f);
-        
-
-        
-
     }
     
     public void Init()

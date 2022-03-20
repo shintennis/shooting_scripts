@@ -32,10 +32,12 @@ public class Enemy : MonoBehaviour
     
     Player player;
     
+    public ItemsManager itemsManager;
+    
     // private GameObject player;
     
     //プレイヤーが取得可能なアイテム一覧
-    // public Items[] m_playerItemsPrefabs;
+    public PlayerItems[] m_playerItemsPrefabs;
     
     //アイテムを管理する配列(経験値)
     public Items[] m_itemsPrefabs;
@@ -88,6 +90,23 @@ public class Enemy : MonoBehaviour
         GetComponent<Rigidbody2D>().velocity = direction * spaceship.speed;
     }
 
+    void OnParticleCollision(GameObject obj)
+    {
+        Debug.Log(obj.gameObject.name + "への爆撃!!");
+        var score = Score.m_instance;
+        var dame = obj.gameObject.GetComponent<ExplosionToEnemy>().ex_damage;
+        hp = hp - dame;
+        if (hp <= 0)
+        {
+            spaceship.Explosion();
+            Destroy(gameObject);
+
+            //経験値アイテムの出現
+            getExpItems();
+            score.AddPoint(point);
+        }
+    }
+    
     void OnTriggerEnter2D (Collider2D c)
     {
         //レイヤー名取得
@@ -104,13 +123,13 @@ public class Enemy : MonoBehaviour
         string name = c.name;
         switch(name)
         {
-            case "PlayerBullet(Clone)":
+            case "subBullet":
 
                 //Bulletコンポ―ネントを取得
-                // Bullet bullet = playerBulletTransform.GetComponent<Bullet>();
-                
+                Bullet bullet = playerBulletTransform.GetComponent<Bullet>();
+
                 //ヒットポイントを減らす
-                // hp = hp - bullet.power;
+                hp = hp - bullet.power;
                 if (hp <= 0)
                 {
                     spaceship.Explosion();
@@ -131,17 +150,12 @@ public class Enemy : MonoBehaviour
             case "playerHomingMissile":
                 Debug.Log("playerShot_2");
                 break;
-            case "playerShot_3":
-                Debug.Log("playerShot_3");
+            case "FireBall":
+                Debug.Log("爆撃!!");
+                var ex_damage = targetTrans.GetComponent<ExplosionToEnemy>().ex_damage;
+                hp = hp - ex_damage;
                 break;
         }
-
-
-                //Bulletコンポ―ネントを取得
-                Bullet bullet = playerBulletTransform.GetComponent<Bullet>();
-                
-                //ヒットポイントを減らす
-                hp = hp - bullet.power;
 
 
         //弾の削除
@@ -152,7 +166,7 @@ public class Enemy : MonoBehaviour
         {
             var score = Score.m_instance;
             var player = Player.m_instance;
-            var item_m = ItemsManager.m_instance;
+            // var item_m = FindObjectOfType<ItemsManager>().GetComponent<ItemsManager>();
             var rand = Random.Range(0, 10);
 
             //爆発
@@ -164,29 +178,12 @@ public class Enemy : MonoBehaviour
 
             if (rand == 1)
             {
-                //プレイヤー取得可能アイテムの生成(ItemsManagerよりランダム生成)
-                Instantiate(item_m.resItems(), transform.localPosition, Quaternion.identity);
+                //プレイヤー強化アイテムの生成
+                getPlayerItems();
             }
             
-           var exp = m_exp;
-
-           while (0 < exp) 
-           {
-               //生成可能なアイテムを配列で取得
-               var itemPrefabs = m_itemsPrefabs.Where(c => c.m_exp <= exp).ToArray();
-
-               //生成可能なアイテムから生成するアイテムを決定する
-               var itemPrefab = itemPrefabs[ Random.Range(0, itemPrefabs.Length )];
-
-               //敵の位置にアイテムを生成する
-               var item = Instantiate(itemPrefab, transform.localPosition, Quaternion.identity);
-
-               //アイテムを初期化
-               item.Init(m_exp, m_itemsSpeedMin, m_itemsSpeedMax);
-
-               exp -= item.m_exp;
-           }
-
+            //経験値アイテムの生成
+            getExpItems();
 
             //スコアコンポーネントを取得してポイントを追加
             score.AddPoint(point);
@@ -199,10 +196,43 @@ public class Enemy : MonoBehaviour
 
         
     }
-
-    public void DeleteAllEnemy()
+    
+    //プレイヤー用アイテム出現関数
+    void getPlayerItems()
     {
-        Destroy(gameObject);
+           //生成可能なアイテムを配列で取得
+           var itemPrefabs = m_playerItemsPrefabs.ToArray();
+
+           //生成可能なアイテムから生成するアイテムを決定する
+           var itemPrefab = itemPrefabs[ Random.Range(0, itemPrefabs.Length)];
+
+           //敵の位置にアイテムを生成する
+           var item = Instantiate(itemPrefab, transform.localPosition, Quaternion.identity);
+           
+           item.Init(m_itemsSpeedMin, m_itemsSpeedMax);
+    }
+
+    //経験値アイテムの出現関数
+    void getExpItems()
+    {
+       var exp = m_exp;
+
+       while (0 < exp) 
+       {
+           //生成可能なアイテムを配列で取得
+           var itemPrefabs = m_itemsPrefabs.Where(c => c.m_exp <= exp).ToArray();
+
+           //生成可能なアイテムから生成するアイテムを決定する
+           var itemPrefab = itemPrefabs[ Random.Range(0, itemPrefabs.Length)];
+
+           //敵の位置にアイテムを生成する
+           var item = Instantiate(itemPrefab, transform.localPosition, Quaternion.identity);
+
+           //アイテムを初期化
+           item.Init(m_exp, m_itemsSpeedMin, m_itemsSpeedMax);
+
+           exp -= item.m_exp;
+       }
     }
     
     

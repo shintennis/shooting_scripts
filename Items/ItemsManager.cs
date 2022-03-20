@@ -6,14 +6,9 @@ using System.Linq;
 
 public class ItemsManager : MonoBehaviour
 {
-    PlayerItems playerItem;
-    Player player;
+    private GameObject playerItem;
     
-    Enemy enemy;
-    
-    Score score;
-    
-    public PlayerItems[] itemPrefabs;
+    public GameObject[] playerItems;
     
     public static ItemsManager m_instance;
 
@@ -22,14 +17,11 @@ public class ItemsManager : MonoBehaviour
     void Start()
     {
         m_instance = this;
-        player = Player.m_instance;
-        enemy = Enemy.m_instance; 
-        score = Score.m_instance;
     }
 
-    public PlayerItems resItems()
+    public GameObject resItems()
     {
-        var items = itemPrefabs.ToArray();
+        var items = playerItems.ToArray();
 
         var itemNum = Random.Range(0, 10);
 
@@ -51,7 +43,9 @@ public class ItemsManager : MonoBehaviour
             playerItem = items[4];
         } 
 
-        Debug.Log(itemNum);
+        Debug.Log(playerItem.name);
+
+        // return Instantiate(playerItem, transform.localPosition, Quaternion.identity);
         return playerItem;
     }
 

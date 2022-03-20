@@ -23,6 +23,8 @@ public class playerHomingMissile : MonoBehaviour
     
     public int damage;
     
+    public float shotDelay = 2f;
+    
     public static playerHomingMissile m_instance;
     
 

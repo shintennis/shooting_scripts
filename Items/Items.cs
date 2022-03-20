@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Items : MonoBehaviour
 {
+    Player player; 
+
     // 取得できる経験値
     public int m_exp; 
     
@@ -30,13 +32,16 @@ public class Items : MonoBehaviour
 
     void Start()
     {
+        player = FindObjectOfType<Player>();
+
         m_instance = this;
     }
 
     // 毎フレーム呼び出される関数
     private void Update()
     {
-        if (Player.m_instance.gameObject.activeSelf == false) Destroy(gameObject);
+        // if (!player) Destroy(gameObject);
+        if (!player) return;
         //プレイヤーの現在地を取得
         var playerPos = Player.m_instance.transform.position;
 

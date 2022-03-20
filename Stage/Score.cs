@@ -63,9 +63,9 @@ public class Score : MonoBehaviour
     {
 
         //プレイヤーを取得
-        var player = FindObjectOfType<Player>();
+        // var player = FindObjectOfType<Player>();
         
-        if (player.gameObject.activeSelf == false) return;
+        if (!player) return;
         //プレイヤーの経験値の表示を更新
         var exp = player.m_exp;
         var prevNeedExp = player.prevNeedExp;

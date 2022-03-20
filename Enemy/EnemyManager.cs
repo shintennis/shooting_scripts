@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class EnemyManager : MonoBehaviour
 {
+    Player player;
     public Enemy[] enemyPrefabs;
     public float interval;
     private float timer;
@@ -15,11 +16,14 @@ public class EnemyManager : MonoBehaviour
         m_instance = this;
 
         interval = .5f;
+        
+        player = FindObjectOfType<Player>();
     }
 
     void Update()
     {
-        if (Player.m_instance.gameObject.activeSelf == false) return;
+        // if (Player.m_instance.gameObject.activeSelf == false) return;
+        if (!player) return;
         
         timer += Time.deltaTime;
         

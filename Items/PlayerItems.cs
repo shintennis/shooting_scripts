@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
+// using System.Linq;
 
 public class PlayerItems : MonoBehaviour
 {
@@ -32,15 +32,16 @@ public class PlayerItems : MonoBehaviour
     void Start()
     {
         m_instance = this;
-        player = Player.m_instance;
-        enemy = Enemy.m_instance;
+        player = FindObjectOfType<Player>();
+        enemy = FindObjectOfType<Enemy>();
     }
 
 
     // 毎フレーム呼び出される関数
     private void Update()
     {
-        if (Player.m_instance.gameObject.activeSelf == false) Destroy(gameObject);
+        // if (player) Destroy(gameObject);
+        if (!player) return;
         //プレイヤーの現在地を取得
         var playerPos = Player.m_instance.transform.position;
 
@@ -90,7 +91,8 @@ public class PlayerItems : MonoBehaviour
     }
 
     // 宝石が出現する時に初期化する関数
-    public void Init( int score, float speedMin, float speedMax )
+    // public void Init( int score, float speedMin, float speedMax )
+    public void Init(float speedMin, float speedMax )
     {
         // 宝石がどの方向に散らばるかランダムに決定する
         var angle = Random.Range( 0, 360 );
@@ -110,9 +112,7 @@ public class PlayerItems : MonoBehaviour
         //衝突したオブジェクトがプレイヤー以外だと無視する
         if (!collision.name.Contains("Player")) return;
         
+        Debug.Log("プレイヤーアイテムの削除");
         Destroy(gameObject);
-
-        var player = collision.GetComponent<Player>();
-        
     }
 }

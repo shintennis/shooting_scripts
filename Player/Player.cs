@@ -15,6 +15,10 @@ public class Player : MonoBehaviour
 	
 	private bool isDamage;
 	
+	private float timeReset = 1;
+	
+	private float time = 0;
+	
 	//次のレベルまでに必要な経験値の基本値
 	public int nextExpBase;
 
@@ -66,6 +70,8 @@ public class Player : MonoBehaviour
 		
 		sp = GetComponent<SpriteRenderer>(); 
 		
+		time = 0;		
+		
 		//ダメージ判定
 		isDamage = false;
 		
@@ -105,15 +111,6 @@ public class Player : MonoBehaviour
 			
 			// 弾をプレイヤーと同じ位置/角度で作成
 			spaceship.Shot (transform);
-			
-			if (spaceship.playerShot1 == true)
-			{
-				spaceship.playerShot_1(transform);
-			}
-			if (spaceship.playerShot2 == true)
-			{
-				spaceship.playerShot_2(transform);
-			}
 
 			// ショット音を鳴らす
 			GetComponent<AudioSource>().Play();
@@ -124,8 +121,12 @@ public class Player : MonoBehaviour
 		
 	}
 	
+		
+	
 	void Update ()
 	{
+		time += Time.deltaTime;
+
 		// 右・左
 		float x = Input.GetAxisRaw ("Horizontal");
 		
@@ -138,6 +139,21 @@ public class Player : MonoBehaviour
 		
 		// 移動の制限
 		Move (direction);
+
+		if (time > timeReset)
+		{
+			if (spaceship.playerShot1 == true)
+			{
+				StartCoroutine("p_shot1");
+			}
+			if (spaceship.playerShot2 == true)
+			{
+				StartCoroutine("p_shot2");
+			}
+
+				time = 0;
+		}
+
 		
 		//ダメージ判定
 		if (isDamage)
@@ -147,6 +163,19 @@ public class Player : MonoBehaviour
 		}
 
 	}
+	
+	IEnumerator p_shot1()
+	{
+		yield return new WaitForSeconds(0.01f);
+		spaceship.playerShot_1(transform);
+	}
+
+	IEnumerator p_shot2()
+	{
+		yield return new WaitForSeconds(0.01f);
+		spaceship.playerShot_2(transform);
+	}
+
 	
 	// 機体の移動
 	void Move (Vector2 direction)
@@ -253,8 +282,13 @@ public class Player : MonoBehaviour
 			{
 				case "ammo(Clone)":
 					Debug.Log("攻撃力UP");
-					if (spaceship.shotDelay < 0.02f) spaceship.shotDelay = 0.01f;
-					spaceship.shotDelay = spaceship.shotDelay - 0.01f;	
+					if (spaceship.shotDelay < 0.05f) 
+					{
+						spaceship.shotDelay = 0.05f;
+						Debug.Log("ショットディレイの固定値");
+					} else {
+						spaceship.shotDelay = spaceship.shotDelay - 0.01f;	
+					}
 					break;
 				case "Bomb(Clone)":
 					Debug.Log("ザコ敵一掃");
@@ -264,12 +298,12 @@ public class Player : MonoBehaviour
 					nowhp = nowhp + 10;
 					score.hpgauge.value = nowhp;					
 					break;
-				case "PlayerBullet_3(Clone)":
+				case "Bombing(Clone)":
 					Debug.Log("攻撃パターン1");
 					spaceship.playerShot1 = true;
 					break;
 
-				case "PlayerBullet_4(Clone)":
+				case "HomingMissile(Clone)":
 					Debug.Log("攻撃パターン2");
 					spaceship.playerShot2 = true;
 					break;
@@ -314,8 +348,17 @@ public class Player : MonoBehaviour
 			// 爆発する
 			spaceship.Explosion();
 			
+			gameObject.SetActive(false);
+			
 			// プレイヤーを削除
 			Destroy (gameObject);
+			
+			var enemyes = GameObject.FindGameObjectsWithTag("Enemy");
+			foreach (var enemy in enemyes)
+			{
+				spaceship.Explosion();
+				Destroy (enemy);
+			}
 
 			// Managerコンポーネントをシーン内から探して取得し、GameOverメソッドを呼び出す
 			FindObjectOfType<Manager>().GameOver();
