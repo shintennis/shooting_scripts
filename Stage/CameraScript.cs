@@ -11,7 +11,7 @@ public class CameraScript : MonoBehaviour
 
     void Start()
     {
-        this.player = GameObject.FindGameObjectWithTag("Player");
+        player = GameObject.FindGameObjectWithTag("Player");
 
         offset = transform.position - player.transform.position;
     }
