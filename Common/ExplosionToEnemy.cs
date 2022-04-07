@@ -5,11 +5,13 @@ using UnityEngine;
 public class ExplosionToEnemy : MonoBehaviour
 {
     public int ex_damage; 
-    
+
+    public static ExplosionToEnemy m_instance; 
     
 
     void Start()
     {
+        m_instance = this;
     }
 
     void Update()

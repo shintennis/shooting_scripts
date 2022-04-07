@@ -79,6 +79,9 @@ public class DB_connect : MonoBehaviour {
                         welcomePage.SetActive(true);
                         LoginPage.SetActive(false);
                         user.text = username.text;
+                        // var response = JsonUtility.FromJson<Response>(www.downloadHandler.text);
+                        // Debug.Log(response.id);
+                        // Debug.Log(response.username);
                         Debug.Log("<color=green>" + www.downloadHandler.text + "</color>");
                     }
                 }
@@ -91,7 +94,16 @@ public class DB_connect : MonoBehaviour {
         
     }
     
+    
 }
+
+    [System.Serializable]
+    public class Response
+    {
+        public int id; 
+        
+        public string username;
+    }
 
 
 

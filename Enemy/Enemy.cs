@@ -150,10 +150,12 @@ public class Enemy : MonoBehaviour
             case "playerHomingMissile":
                 Debug.Log("playerShot_2");
                 break;
-            case "FireBall":
-                Debug.Log("爆撃!!");
-                var ex_damage = targetTrans.GetComponent<ExplosionToEnemy>().ex_damage;
+            case "Missile(Clone)":
+                PlayerMissile playerMissile = c.GetComponent<PlayerMissile>();
+                playerMissile.missile();
+                var ex_damage = FindObjectOfType<ExplosionToEnemy>().GetComponent<ExplosionToEnemy>().ex_damage;
                 hp = hp - ex_damage;
+                Debug.Log("爆撃!!");
                 break;
         }
 

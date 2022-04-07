@@ -313,7 +313,6 @@ public class Player : MonoBehaviour
 					break;
 
 			}
-			
 			Destroy(c.gameObject);
 		}
 		
